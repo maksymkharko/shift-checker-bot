@@ -1,0 +1,7 @@
+[build]
+  command = "npm install"
+  publish = "public"
+
+[[scheduled_functions]]
+  name = "check-shifts"
+  schedule = "* * * * *"
