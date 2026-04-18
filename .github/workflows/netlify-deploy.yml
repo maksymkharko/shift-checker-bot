@@ -1,14 +1,14 @@
-name: Deploy to Netlify
+name: Check Shifts
 
 on:
+  schedule:
+    - cron: '* * * * *'
   push:
     branches:
       - main
-  schedule:
-    - cron: '* * * * *'
 
 jobs:
-  deploy:
+  check:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -21,10 +21,9 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Deploy to Netlify
-        uses: netlify/actions/cli@master
-        with:
-          args: deploy --dir=public --functions=netlify/functions --prod
+      - name: Run shift checker
         env:
-          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
-          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+          TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          FORM_URL: ${{ secrets.FORM_URL }}
+        run: node netlify/functions/check-shifts.mjs
