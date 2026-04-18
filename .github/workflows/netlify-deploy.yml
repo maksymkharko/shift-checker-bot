@@ -13,6 +13,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Restore state cache
+        uses: actions/cache@v4
+        with:
+          path: .state.json
+          key: shift-state-${{ github.run_id }}
+          restore-keys: |
+            shift-state-
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
@@ -26,4 +34,15 @@ jobs:
           TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
           FORM_URL: ${{ secrets.FORM_URL }}
+          FORM_POST_URL: ${{ secrets.FORM_POST_URL }}
+          FORM_EMAIL: ${{ secrets.FORM_EMAIL }}
+          FORM_NAME: ${{ secrets.FORM_NAME }}
+          FORM_EMPLOYEE_ID: ${{ secrets.FORM_EMPLOYEE_ID }}
         run: node netlify/functions/check-shifts.mjs
+
+      - name: Save state cache
+        uses: actions/cache/save@v4
+        if: always()
+        with:
+          path: .state.json
+          key: shift-state-${{ github.run_id }}
